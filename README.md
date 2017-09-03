@@ -100,7 +100,9 @@ features.txt - Names of column variables in the dataTable
 activity_labels.txt - Links the class labels with their activity name.
 
 Read the above files and create data tables.
+
 # Read train data
+
 Subject_TrainData <- tbl_df(read.table("./train/subject_train.txt"))
 
 Activity_TrainData <- tbl_df(read.table("./train/Y_train.txt"))
@@ -108,6 +110,7 @@ Activity_TrainData <- tbl_df(read.table("./train/Y_train.txt"))
 TrainData <- tbl_df(read.table("./train/X_train.txt"))
 
 # Read test data
+
 Subject_TestData  <- tbl_df(read.table("./test/subject_test.txt"))
 
 Activity_TestData  <- tbl_df(read.table("./test/Y_test.txt"))
@@ -119,6 +122,7 @@ Part 1 - Merge the training and the test sets to create one data set
 We can use combine the respective data in training and test data sets corresponding to subject, activity and features. 
 
 # merge the training and the test sets by row binding and rename variables "subject" and "activityNum"
+
 oneSubjectData <- rbind(Subject_TrainData, Subject_TestData)
 
 setnames(oneSubjectData, "V1", "subject")
@@ -128,12 +132,14 @@ oneActivityData <- rbind(Activity_TrainData, Activity_TestData)
 setnames(oneActivityData, "V1", "activityNum")
 
 #combine the training and test data
+
 oneData <- rbind(TrainData, TestData)
 
 Naming the columns
 The columns in the features data set can be named 
 
 # name variables according to feature 
+
 FeaturesData <- tbl_df(read.table("./features.txt"))
 
 setnames(FeaturesData , names(FeaturesData), c("featureNum", "featureName"))
@@ -147,6 +153,7 @@ activity_Labels <- tbl_df(read.table("./activity_labels.txt"))
 setnames(activity_Labels, names(activity_Labels), c("activityNum","activityName"))
 
 # Merge columns
+
 allSubActData <- cbind(oneSubjectData, oneActivityData)
 
 oneData <- cbind(allSubActData, oneData)
@@ -156,9 +163,11 @@ Part 2 - Extracts only the measurements on the mean and standard deviation for e
 Extract the column indices that have either mean or std in them.
 
 # Reading "features.txt" and extracting only the mean and standard deviation
+
 FeaturesMSData <- grep("mean\\(\\)|std\\(\\)",FeaturesData$featureName,value=TRUE) 
 
 # Taking only measurements for the mean and standard deviation 
+
 FeaturesMSData <- union(c("subject","activityNum"), FeaturesMSData)
 
 oneData <- subset(oneData, select=FeaturesMSData) 
@@ -166,11 +175,13 @@ oneData <- subset(oneData, select=FeaturesMSData)
 
 Part 3 - Uses descriptive activity names to name the activities in the data set
 #enter name of activity 
+
 oneData <- merge(activity_Labels, oneData , by="activityNum", all.x=TRUE)
 
 oneData$activityName <- as.character(oneData$activityName)
 
 # create data with variable means sorted by subject and Activity
+
 Aggregdata<- aggregate(. ~ subject - activityName, data = oneData, mean) 
 
 oneData<- tbl_df(arrange(Aggregdata,subject,activityName))
@@ -249,6 +260,7 @@ names(oneData)
 
 Part 5 - From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject
 #Write tidy data into a text file
+
 write.table(oneData, "TidyDFile.txt", row.name=FALSE)
 
 
