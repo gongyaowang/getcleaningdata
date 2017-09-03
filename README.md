@@ -83,7 +83,9 @@ Assumed that data file was downloaded and extracted in the R current working dir
 Load required packages
 
 library(dplyr)
+
 library(data.table)
+
 library(tidyr)
 
 Files in folder that will be used are:
@@ -100,12 +102,16 @@ activity_labels.txt - Links the class labels with their activity name.
 Read the above files and create data tables.
 # Read train data
 Subject_TrainData <- tbl_df(read.table("./train/subject_train.txt"))
+
 Activity_TrainData <- tbl_df(read.table("./train/Y_train.txt"))
+
 TrainData <- tbl_df(read.table("./train/X_train.txt"))
 
 # Read test data
 Subject_TestData  <- tbl_df(read.table("./test/subject_test.txt"))
+
 Activity_TestData  <- tbl_df(read.table("./test/Y_test.txt"))
+
 TestData  <- tbl_df(read.table("./test/X_test.txt"))
 
 
@@ -114,8 +120,11 @@ We can use combine the respective data in training and test data sets correspond
 
 # merge the training and the test sets by row binding and rename variables "subject" and "activityNum"
 oneSubjectData <- rbind(Subject_TrainData, Subject_TestData)
+
 setnames(oneSubjectData, "V1", "subject")
+
 oneActivityData <- rbind(Activity_TrainData, Activity_TestData)
+
 setnames(oneActivityData, "V1", "activityNum")
 
 #combine the training and test data
@@ -126,15 +135,20 @@ The columns in the features data set can be named
 
 # name variables according to feature 
 FeaturesData <- tbl_df(read.table("./features.txt"))
+
 setnames(FeaturesData , names(FeaturesData), c("featureNum", "featureName"))
+
 colnames(oneData) <- FeaturesData$featureName
 
 #column names for activity labels
+
 activity_Labels <- tbl_df(read.table("./activity_labels.txt"))
+
 setnames(activity_Labels, names(activity_Labels), c("activityNum","activityName"))
 
 # Merge columns
 allSubActData <- cbind(oneSubjectData, oneActivityData)
+
 oneData <- cbind(allSubActData, oneData)
 
 
@@ -146,16 +160,19 @@ FeaturesMSData <- grep("mean\\(\\)|std\\(\\)",FeaturesData$featureName,value=TRU
 
 # Taking only measurements for the mean and standard deviation 
 FeaturesMSData <- union(c("subject","activityNum"), FeaturesMSData)
+
 oneData <- subset(oneData, select=FeaturesMSData) 
 
 
 Part 3 - Uses descriptive activity names to name the activities in the data set
 #enter name of activity 
 oneData <- merge(activity_Labels, oneData , by="activityNum", all.x=TRUE)
+
 oneData$activityName <- as.character(oneData$activityName)
 
 # create data with variable means sorted by subject and Activity
 Aggregdata<- aggregate(. ~ subject - activityName, data = oneData, mean) 
+
 oneData<- tbl_df(arrange(Aggregdata,subject,activityName))
 
 
@@ -163,6 +180,7 @@ Part 4 - Appropriately labels the data set with descriptive variable names
 Here are the names of the variables in oneData
 
 names(oneData)
+
  [1] "subject"                     "activityName"                "activityNum"                 "tBodyAcc-mean()-X"           "tBodyAcc-mean()-Y"          
  [6] "tBodyAcc-mean()-Z"           "tBodyAcc-std()-X"            "tBodyAcc-std()-Y"            "tBodyAcc-std()-Z"            "tGravityAcc-mean()-X"       
 [11] "tGravityAcc-mean()-Y"        "tGravityAcc-mean()-Z"        "tGravityAcc-std()-X"         "tGravityAcc-std()-Y"         "tGravityAcc-std()-Z"        
@@ -188,15 +206,23 @@ Mag = magnitude of movement
 mean and SD are calculated for each subject for each activity for each mean and SD measurements. The units given are g's for the accelerometer and rad/sec for the gyro and g/sec and rad/sec/sec for the corresponding jerks.
 
 names(oneData)<-gsub("std()", "STD", names(oneData))
+
 names(oneData)<-gsub("mean()", "MEAN", names(oneData))
+
 names(oneData)<-gsub("^t", "Time", names(oneData))
+
 names(oneData)<-gsub("^f", "Frequency", names(oneData))
+
 names(oneData)<-gsub("Acc", "Accelerometer", names(oneData))
+
 names(oneData)<-gsub("Gyro", "Gyroscope", names(oneData))
+
 names(oneData)<-gsub("Mag", "Magnitude", names(oneData))
+
 names(oneData)<-gsub("BodyBody", "Body", names(oneData))
 
 names(oneData)
+
 [1] "subject"                                        "activityName"                                   "activityNum"                                   
  [4] "TimeBodyAccelerometer-MEAN()-X"                 "TimeBodyAccelerometer-MEAN()-Y"                 "TimeBodyAccelerometer-MEAN()-Z"                
  [7] "TimeBodyAccelerometer-STD()-X"                  "TimeBodyAccelerometer-STD()-Y"                  "TimeBodyAccelerometer-STD()-Z"                 
