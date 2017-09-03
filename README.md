@@ -1,4 +1,3 @@
-# getcleaningdata
 Getting and Cleaning Data Course Assignment
 
 Instructions:
@@ -84,9 +83,7 @@ Assumed that data file was downloaded and extracted in the R current working dir
 Load required packages
 
 library(dplyr)
-
 library(data.table)
-
 library(tidyr)
 
 Files in folder that will be used are:
@@ -188,7 +185,7 @@ Acc = accelerometer measurement
 Gyro = gyroscopic measurements
 Jerk = sudden movement acceleration
 Mag = magnitude of movement
-mean and SD are calculated for each subject for each activity for each mean and SD measurements. The units given are g’s for the accelerometer and rad/sec for the gyro and g/sec and rad/sec/sec for the corresponding jerks.
+mean and SD are calculated for each subject for each activity for each mean and SD measurements. The units given are g's for the accelerometer and rad/sec for the gyro and g/sec and rad/sec/sec for the corresponding jerks.
 
 names(oneData)<-gsub("std()", "STD", names(oneData))
 names(oneData)<-gsub("mean()", "MEAN", names(oneData))
@@ -229,4 +226,4 @@ Part 5 - From the data set in step 4, creates a second, independent tidy data se
 write.table(oneData, "TidyDFile.txt", row.name=FALSE)
 
 
-The tidy data set a set of variables for each activity and each subject, which was written into TidyDFile.txt. The tidy data set’s first row is the header containing the names for each column.
+The tidy data set a set of variables for each activity and each subject, which was written into TidyDFile.txt. The tidy data set's first row is the header containing the names for each column.
