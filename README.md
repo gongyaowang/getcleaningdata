@@ -84,7 +84,9 @@ Assumed that data file was downloaded and extracted in the R current working dir
 Load required packages
 
 library(dplyr)
+
 library(data.table)
+
 library(tidyr)
 
 Files in folder that will be used are:
